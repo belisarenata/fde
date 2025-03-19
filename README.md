@@ -1,5 +1,11 @@
-# Python Starter
+Hello :wave:
 
-Quickly get started with [Python](https://www.python.org/) using this starter! 
+Install requirements by running "pip install -r requirements.txt"
 
-- If you want to upgrade Python, you can change the image in the [Dockerfile](./.devcontainer/Dockerfile).
+Start app by running "fastapi dev main.py" on terminal.
+
+To open the terminal, press ⇧⌘c or click on the little sandwich icon next to Run And Debug -> View -> Terminal
+
+You can use the /docs to try out the sorting function
+
+Run "python -m pytest test_api.py -v" for tests
