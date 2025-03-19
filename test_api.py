@@ -1,19 +1,21 @@
-import pytest
 from fastapi.testclient import TestClient
 from app import app
+from enums import Stacks
 
 client = TestClient(app)
 
 def test_standard_package():
-    package = {
-        "width": 100,
-        "height": 100,
-        "length": 100,
-        "mass": 10
-    }
-    response = client.post("/sort", json=package)
+    response = client.post("/sort", 
+        json=
+        {
+            "width": 100,
+            "height": 100,
+            "length": 100,
+            "mass": 10
+        })
     assert response.status_code == 200
-    assert response.json()["stack"] == "STANDARD"
+
+    assert response.text == Stacks.STANDARD.value
 
 def test_bulky_package_volume():
     package = {
@@ -24,7 +26,7 @@ def test_bulky_package_volume():
     }
     response = client.post("/sort", json=package)
     assert response.status_code == 200
-    assert response.json()["stack"] == "SPECIAL"
+    assert response.text == Stacks.SPECIAL.value
 
 def test_bulky_package_dimension():
     package = {
@@ -35,7 +37,7 @@ def test_bulky_package_dimension():
     }
     response = client.post("/sort", json=package)
     assert response.status_code == 200
-    assert response.json()["stack"] == "SPECIAL"
+    assert response.text == Stacks.SPECIAL.value
 
 def test_heavy_package():
     package = {
@@ -46,7 +48,7 @@ def test_heavy_package():
     }
     response = client.post("/sort", json=package)
     assert response.status_code == 200
-    assert response.json()["stack"] == "SPECIAL"
+    assert response.text == Stacks.SPECIAL.value
 
 def test_rejected_package():
     package = {
@@ -57,7 +59,7 @@ def test_rejected_package():
     }
     response = client.post("/sort", json=package)
     assert response.status_code == 200
-    assert response.json()["stack"] == "REJECTED"
+    assert response.text == Stacks.REJECTED.value
 
 def test_invalid_package_negative_values():
     package = {
@@ -68,6 +70,17 @@ def test_invalid_package_negative_values():
     }
     response = client.post("/sort", json=package)
     assert response.status_code == 422  # Validation error
+
+def test_invalid_package_negative_mass_values():
+    package = {
+        "width": 10,
+        "height": 100,
+        "length": 100,
+        "mass": -10
+    }
+    response = client.post("/sort", json=package)
+    assert response.status_code == 422  # Validation error
+
 
 def test_invalid_package_missing_values():
     package = {
@@ -81,6 +94,17 @@ def test_invalid_package_missing_values():
 def test_invalid_package_zero_values():
     package = {
         "width": 0,
+        "height": 100,
+        "length": 100,
+        "mass": 10
+    }
+    response = client.post("/sort", json=package)
+    assert response.status_code == 422  # Validation error
+
+
+def test_invalid_package_str_values():
+    package = {
+        "width": "abc",
         "height": 100,
         "length": 100,
         "mass": 10

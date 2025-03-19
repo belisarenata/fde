@@ -1,12 +1,12 @@
-from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import HTMLResponse
-from decimal import Decimal 
-from models import Package, SortResponse
+from decimal import Decimal
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse, PlainTextResponse
+from models import Package
 from enums import Stacks
 
 app = FastAPI(
     title="Package Sorting API",
-    description="API for sorting packages based on their dimensions and mass",
+    description="API for sorting packages based on their dimensions and mass", 
     version="1.0.0"
 )
 
@@ -40,7 +40,8 @@ def is_heavy(package: Package) -> bool:
     """
     return package.mass >= 20
 
-def determine_stack(package: Package) -> SortResponse:
+
+def determine_stack(package: Package) -> str:
     """
     Determine the appropriate stack for a package based on its properties
     """
@@ -48,27 +49,24 @@ def determine_stack(package: Package) -> SortResponse:
     heavy = is_heavy(package)
 
     if bulky and heavy:
-        return Stacks.REJECTED
+        return Stacks.REJECTED.value
     elif bulky or heavy:
-        return Stacks.SPECIAL
+        return Stacks.SPECIAL.value
     else:
-        return Stacks.STANDARD
+        return Stacks.STANDARD.value
 
-@app.post("/sort")
+@app.post("/sort", response_class=PlainTextResponse)
 async def sort_package(
-    width: Decimal, 
-    height: Decimal,
-    length: Decimal,
-    mass: Decimal
+    package: Package
 ):
     """
     Sort a package based on its dimensions and mass
     Handles both form submissions and JSON API requests
     """
-    if not all(v is not None for v in [width, height, length, mass]):
-        raise HTTPException(status_code=422, detail=str(e))
 
-    package = Package(width=width, height=height, length=length, mass=mass)
+    if not all((v is not None and v > 0) for v in package.__dict__.values()):
+        raise HTTPException(status_code=422, detail=str("Invalid input"))
+
     result = determine_stack(package)
     return result
     
