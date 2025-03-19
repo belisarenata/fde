@@ -16,15 +16,15 @@ def read_root():
             <html> 
             Hello :wave: <br>
 
-             Start app by running "fastapi dev main.py" on terminal. <br>
+            Start app by running "fastapi dev main.py" on terminal. <br>
 
-             To open the terminal, press ⇧⌘c or click on the little sandwich icon next to Run And Debug -> View -> Terminal <br>
-             
-             You can use the /docs to try out the sorting function <br>
+            To open the terminal, press ⇧⌘c or click on the little sandwich icon next to Run And Debug -> View -> Terminal <br>
+            
+            You can use the /docs to try out the sorting function <br>
 
-             Run "python -m pytest test_api.py -v" for tests <br>
-             </html>
-             '''
+            Run "python -m pytest test_api.py -v" for tests <br>
+            </html>
+            '''
 
 def is_bulky(package: Package) -> bool:
     """
